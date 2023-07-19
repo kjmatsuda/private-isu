@@ -9,14 +9,15 @@ module Isuconp
   class App < Sinatra::Base
     use Rack::Session::Dalli, autofix_keys: true, secret: ENV['ISUCONP_SESSION_SECRET'] || 'sendagaya', memcache_server: ENV['ISUCONP_MEMCACHED_ADDRESS'] || 'localhost:11211'
     use Rack::Flash
-    set :public_folder, File.expand_path('../../public', __FILE__)
+    set :public_folder, File.expand_path('../public', __FILE__)
 
     UPLOAD_LIMIT = 10 * 1024 * 1024 # 10mb
 
     POSTS_PER_PAGE = 20
 
     # TODO ここのパスはこれでいいのだろうか...
-    IMAGE_DIR = File.expand_path('../../public/image', __FILE__)
+    # IMAGE_DIR = File.expand_path('../public/image', __FILE__)
+    IMAGE_DIR = "/home/public/image"
 
     helpers do
       def config
@@ -307,7 +308,7 @@ module Isuconp
       end
 
       if params['file']
-        mime, ext = ','
+        mime, ext = '',''
         # 投稿のContent-Typeからファイルのタイプを決定する
         if params["file"][:type].include? "jpeg"
           mime, ext = "image/jpeg", "jpg"
