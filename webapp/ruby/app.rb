@@ -247,7 +247,7 @@ module Isuconp
 
       results = db.prepare("SELECT p.id, p.user_id, p.body, p.created_at, p.mime, u.account_name
         FROM `posts` AS p JOIN `users` AS u ON (p.user_id=u.id)
-       WHERE p.user_id = ? u.del_flg=0 ORDER BY p.created_at DESC LIMIT #{POSTS_PER_PAGE}").execute(
+       WHERE p.user_id = ? AND u.del_flg=0 ORDER BY p.created_at DESC LIMIT #{POSTS_PER_PAGE}").execute(
         user[:id]
       )
 
@@ -279,7 +279,7 @@ module Isuconp
       max_created_at = params['max_created_at']
       results = db.prepare("SELECT p.id, p.user_id, p.body, p.created_at, p.mime, u.account_name
         FROM `posts` AS p JOIN `users` AS u ON (p.user_id=u.id)
-       WHERE p.created_at <= ? u.del_flg=0 ORDER BY p.created_at DESC LIMIT #{POSTS_PER_PAGE}").execute(
+       WHERE p.created_at <= ? AND u.del_flg=0 ORDER BY p.created_at DESC LIMIT #{POSTS_PER_PAGE}").execute(
         max_created_at.nil? ? nil : Time.iso8601(max_created_at).localtime
       )
       posts = make_posts(results)
@@ -288,7 +288,9 @@ module Isuconp
     end
 
     get '/posts/:id' do
-      results = db.prepare('SELECT * FROM `posts` WHERE `id` = ?').execute(
+      results = db.prepare("SELECT p.id, p.user_id, p.body, p.created_at, p.mime, u.account_name
+        FROM `posts` AS p JOIN `users` AS u ON (p.user_id=u.id)
+       WHERE p.id = ? AND u.del_flg=0 ORDER BY p.created_at DESC LIMIT #{POSTS_PER_PAGE}").execute(
         params[:id]
       )
       posts = make_posts(results, all_comments: true)
