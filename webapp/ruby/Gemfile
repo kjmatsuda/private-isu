@@ -11,3 +11,4 @@ gem "mysql2-cs-bind"
 gem "rack-flash3"
 gem 'connection_pool'
 gem "dalli"
+gem "openssl"
